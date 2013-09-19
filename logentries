@@ -1,0 +1,46 @@
+#!/bin/sh
+# PROVIDE: logentries
+
+name="logentries"
+pidfile="/var/run/${name}.pid"
+python="/usr/local/bin/python"
+le="/usr/local/bin/le"
+monitor="monitor"
+
+
+
+case "$1" in
+  start)
+     if [ ! -f ${pidfile} ]
+     then
+        echo -n "Starting Logentries Agent"
+        ${le} ${monitor} &
+        echo $! > ${pidfile}
+     else
+        echo "Logentries Agent is already running"
+     fi
+     ;;
+  stop)
+     if [ ! -f ${pidfile} ]
+     then
+        echo "Lognetries Agent is not running"
+     else
+     echo -n "Stopping services: Logentries Agent"
+     kill `cat ${pidfile}` 
+     rm ${pidfile}
+     echo "." 
+     fi      
+     ;;
+  restart)
+    $0 stop 
+    $0 start 
+    ;;
+  *)
+    # Refuse to do other stuff
+    echo "Usage: /etc/init.d/testdaemon.sh {start|stop|restart}"
+    exit 1
+    ;; 
+esac
+    
+exit 0
+
